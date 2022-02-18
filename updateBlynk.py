@@ -9,7 +9,7 @@ import state
 import traceback
 # Check for user imports
 import config
-
+import wirelessSensors
 
 DEBUGBLYNK = False 
 def stopFlash():
@@ -37,6 +37,10 @@ def blynkInit():
             r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V8?value=0')
         else:        
             r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V8?value=1')
+
+        if(config.BLYNK_DEV_ID):
+           dev_id_blynk_message = "Using WeatherRack2 ID: " + str(config.BLYNK_DEV_ID)
+           blynkTerminalUpdate(dev_id_blynk_message)
 
         if (DEBUGBLYNK):
             print("Exiting blynkInit:")
@@ -151,6 +155,14 @@ def blynkUpdateImage():
 
 
 def blynkStateUpdate():
+    #If the Blynk ID value is set:
+    if config.BLYNK_DEV_ID:
+       #Find the WeatherRack in the array that matches the value
+       for WR2JSON in state.MWR2Array:
+         if str(WR2JSON["id"]) == config.BLYNK_DEV_ID:
+             #set that to current state
+             textWR2JSON = json.dumps(WR2JSON)
+             wirelessSensors.processFT020T(textWR2JSON, "", False)
 
     try:
      # do not blynk if no main reading yet

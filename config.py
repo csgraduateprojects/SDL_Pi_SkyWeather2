@@ -72,6 +72,7 @@ WeatherUnderground_StationID = None
 WeatherUnderground_StationKey = None
 USEBLYNK = None
 BLYNK_AUTH = None
+BLYNK_DEV_ID = None
 USEWSLIGHTNING = None
 USEWSAQI = None
 USEWSSKYCAM = None

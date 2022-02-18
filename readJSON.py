@@ -26,6 +26,7 @@ def setDefaults():
         config.WeatherUnderground_StationKey = "YYYYYY"
         config.USEBLYNK = False
         config.BLYNK_AUTH = ""
+        config.BLYNK_DEV_ID = False
         config.USEWSLIGHTNING = False
         config.USEWSAQI = False
         config.USEWSSKYCAM = False
@@ -89,6 +90,7 @@ def readJSON(addPath):
                 config.WeatherUnderground_StationKey = getJSONValue('WeatherUnderground_StationKey')
                 config.USEBLYNK = getJSONValue('USEBLYNK')
                 config.BLYNK_AUTH = getJSONValue('BLYNK_AUTH')
+                config.BLYNK_DEV_ID = getJSONValue('BLYNK_DEV_ID')
                 config.USEWSLIGHTNING = getJSONValue('USEWSLIGHTNING')
                 config.USEWSAQI = getJSONValue('USEWSAQI')
                 config.USWSSKYCAM = getJSONValue('USEWSSKYCAM')
