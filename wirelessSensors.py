@@ -64,15 +64,16 @@ def randomadd(value, spread):
     return round(value+random.uniform(-spread, spread),2)
 
 
+#changes
 # MQTT Publish Line
-def mqtt_publish_single(message, topic):
-    topic = '{0}/{1}'.format("skyweather2", topic)
+#def mqtt_publish_single(message, topic):
+#    topic = '{0}/{1}'.format("skyweather2", topic)
     #print ("topic=", topic)
-    try:
-            state.mqtt_client.publish(topic, message)
-    except:
-        traceback.print_exc()
-        print('Mosquitto not available')
+#    try:
+#            state.mqtt_client.publish(topic, message)
+#    except:
+#        traceback.print_exc()
+#        print('Mosquitto not available')
 
 
 
@@ -94,8 +95,9 @@ def processFT020T(sLine, lastFT020TTimeStamp, UpdateWR2 ):
 
     lastFT020TTimeStamp = var["time"]
 
-    if (config.MQTT_Enable == True):
-        mqtt_publish_single(sLine, "FT020T")
+    #changes
+    #if (config.MQTT_Enable == True):
+        #mqtt_publish_single(sLine, "FT020T")
 
     # now check for adding record
 
@@ -175,10 +177,12 @@ def processFT020T(sLine, lastFT020TTimeStamp, UpdateWR2 ):
     #print("looking for buildJSONSemaphore acquire")
     state.buildJSONSemaphore.acquire()
     #print("buildJSONSemaphore acquired")
+
     if (UpdateWR2):
-        # now add to MWR2Array
+        #now add to MWR2Array
         WeatherRack2Array.addWR2Reading(var)
     state.StateJSON = buildJSON.getStateJSON()
+
     #if (config.SWDEBUG):
     #    print("currentJSON = ", state.StateJSON)
     state.buildJSONSemaphore.release()
@@ -206,8 +210,9 @@ def processF016TH(sLine):
     state.mainID = var["device"] + var["channel"]
     state.lastIndoorReading = nowStr()
 
-    if (config.MQTT_Enable == True):
-         mqtt_publish_single(sLine, f"F016TH/{var['channel']}")
+    #changes
+    #if (config.MQTT_Enable == True):
+         #mqtt_publish_single(sLine, f"F016TH/{var['channel']}")
 
 
 

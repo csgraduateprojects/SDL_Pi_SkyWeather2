@@ -10,6 +10,7 @@ def getStateJSON():
 
         now = datetime.now()
         data = {}
+        
         data['SkyWeather2Version'] = config.SWVERSION
         data['SampleDateTime'] = now.strftime("%m/%d/%y, %H:%M:%S %Z%z")
         data['UTCTime'] = datetime.utcnow().isoformat()
@@ -56,3 +57,36 @@ def getStateJSON():
         data['fanState'] = state.fanState
 
         return json.dumps(data)
+    
+    
+def getStateJSON_all():
+        """
+             Returns a list of json messages based on state variables
+        """
+        states_list = []
+        for single_state in state.MWR2Array:
+            now = datetime.now()
+            data = {}
+            #Time is replaced with current UTC time. May want to evaluate a conversion later.
+            data['time'] = datetime.utcnow().isoformat()
+            data['model'] = single_state['model']
+            data['device'] = single_state['device']
+            data['id'] = single_state['id']
+            data['batterylow'] = single_state['batterylow']
+            data['avewindspeed'] = single_state['avewindspeed']
+            data['gustwindspeed'] = single_state['gustwindspeed']
+            data['winddirection'] = single_state['winddirection']
+            data['cumulativerain'] = single_state['cumulativerain']
+            #Temp converted to F
+            data['temperature'] = round(((single_state['temperature'] - 32.0)/(9.0/5.0)), 2)
+            data['humidity'] = single_state['humidity']
+            data['light'] = single_state['light'] 
+            data['uv'] = single_state['uv']
+            data['mic'] = single_state['mic'] 
+            data['mod'] = single_state['mod'] 
+            data['freq'] = single_state['freq'] 
+            data['rssi'] = single_state['rssi']
+            data['snr'] = single_state['snr']
+            data['noise'] = single_state['noise']
+            states_list.append(json.dumps(data))
+        return states_list

@@ -341,11 +341,11 @@ if (config.USEBLYNK):
 
 import paho.mqtt.client as mqtt
 
-
+#changes
 # set up MQTT
-if (config.MQTT_Enable):
-    state.mqtt_client = mqtt.Client(client_id="SkyWeather2") 
-    state.mqtt_client.connect(config.MQTT_Server_URL, port=config.MQTT_Port_Number)
+#if (config.MQTT_Enable):
+#    state.mqtt_client = mqtt.Client(client_id="SkyWeather2") 
+#    state.mqtt_client.connect(config.MQTT_Server_URL, port=config.MQTT_Port_Number)
 
 import publishMQTT
 
@@ -413,10 +413,10 @@ scheduler.add_job(pclogging.writeITWeatherRecord, 'interval', seconds=15*60)
 if (config.Camera_Present):
         scheduler.add_job(SkyCamera.takeSkyPicture, 'interval', seconds=config.INTERVAL_CAM_PICS__SECONDS) 
 
-
+#changes
 # process SkyCam Remote bi-directional messages 
-if (config.MQTT_Enable== True):
-    scheduler.add_job(SkyCamRemote.startMQTT)  # run in background
+#if (config.MQTT_Enable== True):
+#    scheduler.add_job(SkyCamRemote.startMQTT)  # run in background
 
 # SkyCam Management Programs
 scheduler.add_job(PictureManagement.cleanPictures, 'cron', day='*', hour=3, minute=4, args=["Daily Picture Clean"])
