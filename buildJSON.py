@@ -4,7 +4,8 @@ import config
 import state
 import json
 from datetime import datetime
-
+from datetime import timezone
+import pytz
 
 def getStateJSON():
 
@@ -65,10 +66,15 @@ def getStateJSON_all():
         """
         states_list = []
         for single_state in state.MWR2Array:
-            now = datetime.now()
+            #now = datetime.now()
             data = {}
-            #Time is replaced with current UTC time. May want to evaluate a conversion later.
-            data['time'] = datetime.utcnow().isoformat()
+            #Time is converted to UTC time
+            get_time = datetime.strptime(single_state['time'], "%Y-%m-%d %H:%M:%S")
+            time_utc = get_time.astimezone(pytz.UTC)
+            time_utc = time_utc.replace(tzinfo=timezone.utc)
+            #data['time'] = time_utc.isoformat()
+            data['time'] = time_utc.strftime("%Y-%m-%dT%H:%M:%S.%f")
+
             data['model'] = single_state['model']
             data['device'] = single_state['device']
             data['id'] = single_state['id']
@@ -78,7 +84,12 @@ def getStateJSON_all():
             data['winddirection'] = single_state['winddirection']
             data['cumulativerain'] = single_state['cumulativerain']
             #Temp converted to F
-            data['temperature'] = round(((single_state['temperature'] - 32.0)/(9.0/5.0)), 2)
+            wTemp = (single_state['temperature'] - 400)/10.0
+            if (wTemp > 140.0):
+                 print("Temp Error")
+                 data['temperature'] = -140.0
+            else:
+                 data['temperature'] = round(((wTemp - 32.0)/(9.0/5.0)),2)
             data['humidity'] = single_state['humidity']
             data['light'] = single_state['light'] 
             data['uv'] = single_state['uv']
