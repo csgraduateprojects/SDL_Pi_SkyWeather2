@@ -51,9 +51,9 @@ def publish():
     for single_state in all_states:
     #if len(all_states) > 1:
         #single_state = all_states[0]
-        print("Going to publish")
-        print(single_state)
-        print(type(single_state))
+        #print("Going to publish")
+        #print(single_state)
+        #print(type(single_state))
         msgpub = state.mqtt_client.publish("skyweather2/state", single_state)
 
         #check if sent
