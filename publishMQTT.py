@@ -39,7 +39,6 @@ def publish():
     #Get semaphore first so we don't have a halfway read issue
     state.buildJSONSemaphore.acquire()
     #print("buildJSONSemaphore Acquired")
-    #---don't think we need this state.StateJSON = buildJSON.getStateJSON()
     #if (config.SWDEBUG):
     #    print("currentJSON = ", state.StateJSON)
     #Get all the state readings
@@ -53,7 +52,6 @@ def publish():
         #single_state = all_states[0]
         #print("Going to publish")
         #print(single_state)
-        #print(type(single_state))
         msgpub = state.mqtt_client.publish("skyweather2/state", single_state)
 
         #check if sent

@@ -99,5 +99,6 @@ def getStateJSON_all():
             data['rssi'] = single_state['rssi']
             data['snr'] = single_state['snr']
             data['noise'] = single_state['noise']
+            data['gateway_id'] = config.Gateway_Id
             states_list.append(json.dumps(data))
         return states_list

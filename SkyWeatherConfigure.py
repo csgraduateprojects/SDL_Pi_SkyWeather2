@@ -268,7 +268,7 @@ class SkyWeatherConfigure(App):
         self.MQTT_Port_Number = 1883 
         self.MQTT_Send_Seconds = 500 
         self.English_Metric = False
-       
+        self.Gateway_Id = 0       
        
         self.dataDefaults = {} 
 
@@ -313,6 +313,7 @@ class SkyWeatherConfigure(App):
         self.dataDefaults['MQTT_Port_Number'] = self.MQTT_Port_Number 
         self.dataDefaults['MQTT_Send_Seconds'] = self.MQTT_Send_Seconds 
         self.dataDefaults['English_Metric'] = self.English_Metric 
+        self.dataDefaults['Gateway_Id'] = self.Gateway_Id 
 
     def getJSONValue(self, entry):
         try:
@@ -375,6 +376,7 @@ class SkyWeatherConfigure(App):
                 self.MQTT_Port_Number = self.getJSONValue('MQTT_Port_Number')
                 self.MQTT_Send_Seconds = self.getJSONValue('MQTT_Send_Seconds')
                 self.English_Metric = self.getJSONValue('English_Metric')
+                self.Gateway_Id = self.getJSONValue('Gateway_Id')
 
         else:
             print ("SkyWeather2.JSON File does not exist")
@@ -433,6 +435,7 @@ class SkyWeatherConfigure(App):
         data['MQTT_Port_Number'] = self.F_MQTT_Port_Number.get_value()
         data['MQTT_Send_Seconds'] = self.F_MQTT_Send_Seconds.get_value()
         data['English_Metric'] = self.F_English_Metric.get_value()
+        data['Gateway_Id'] = self.F_Gateway_Id.get_value()
 
         json_data = json.dumps(data)        
         

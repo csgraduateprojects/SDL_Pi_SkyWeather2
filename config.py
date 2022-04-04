@@ -90,6 +90,7 @@ MQTT_Server_URL = None
 MQTT_Port_Number = None
 MQTT_Send_Seconds = None
 English_Metric = None
+Gateway_Id = 0
 
 import readJSON
 
