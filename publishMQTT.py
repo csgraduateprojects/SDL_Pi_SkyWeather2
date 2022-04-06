@@ -28,8 +28,8 @@ def publish():
     """
     if (config.SWDEBUG):
         print("--->Sending MQTT Packet<---")
-        state.mqtt_client.on_publish = on_publish
-        state.mqtt_client.on_disconnect = on_disconnect
+        #state.mqtt_client.on_publish = on_publish
+        #state.mqtt_client.on_disconnect = on_disconnect
 
     #connect to broker
     connectMQTTBroker()
@@ -50,8 +50,9 @@ def publish():
     for single_state in all_states:
     #if len(all_states) > 1:
         #single_state = all_states[0]
-        #print("Going to publish")
-        #print(single_state)
+        if config.SWDEBUG:
+            print("Going to publish")
+            print(single_state)
         msgpub = state.mqtt_client.publish("skyweather2/state", single_state)
 
         #check if sent

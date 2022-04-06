@@ -246,8 +246,9 @@ def processF016TH(sLine):
 
 # processes Generic Packets 
 def processWeatherSenseGeneric(sLine):
-    if (config.MQTT_Enable == True):
-        mqtt_publish_single(sLine, "Generic")
+    #Another change here
+    #if (config.MQTT_Enable == True):
+    #    mqtt_publish_single(sLine, "Generic")
     if (config.SWDEBUG):
         sys.stdout.write('Processing Generic data'+'\n')
         sys.stdout.write('This is the raw data: ' + sLine + '\n')
@@ -264,8 +265,9 @@ def processWeatherSenseTB(sLine):
         sys.stdout.write('Processing WeatherSense Lightning data'+'\n')
         sys.stdout.write('This is the raw data: ' + sLine + '\n')
 
-    if (config.MQTT_Enable == True):
-        mqtt_publish_single(sLine, "WSLightning")
+    #Another change here
+    #if (config.MQTT_Enable == True):
+    #    mqtt_publish_single(sLine, "WSLightning")
 
     if (config.enable_MySQL_Logging == True):
         # open mysql database
@@ -326,8 +328,9 @@ def processWeatherSenseAQI(sLine):
         sys.stdout.write('Processing WeatherSense Air Quality data'+'\n')
         sys.stdout.write('This is the raw data: ' + sLine + '\n')
 
-    if (config.MQTT_Enable == True):
-        mqtt_publish_single(sLine, "WSAQI")
+    #Another change here
+    #if (config.MQTT_Enable == True):
+    #    mqtt_publish_single(sLine, "WSAQI")
 
     if (config.enable_MySQL_Logging == True):
         # open mysql database
@@ -456,8 +459,9 @@ def processSolarMAX(sLine):
     myProtocol = myState['weathersenseprotocol']
     if ((myProtocol == 8) or (myProtocol == 10) or (myProtocol == 11)):
 
-        if (config.MQTT_Enable == True):
-            mqtt_publish_single(sLine, "WSSolarMAX")
+        #Another change here
+        #if (config.MQTT_Enable == True):
+        #    mqtt_publish_single(sLine, "WSSolarMAX")
 
         if (config.enable_MySQL_Logging == True):
             # open mysql database
@@ -535,8 +539,9 @@ def processWeatherSenseAfterShock(sLine):
         sys.stdout.write("processing AfterShock Data\n")
         sys.stdout.write('This is the raw data: ' + sLine + '\n')
 
-    if (config.MQTT_Enable == True):
-        mqtt_publish_single(sLine, "WSAfterShock")
+    #Another change here
+    #if (config.MQTT_Enable == True):
+    #    mqtt_publish_single(sLine, "WSAfterShock")
 
 
     if (config.enable_MySQL_Logging == True):
