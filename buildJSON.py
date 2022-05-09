@@ -79,10 +79,10 @@ def getStateJSON_all():
             data['device'] = single_state['device']
             data['id'] = single_state['id']
             data['batterylow'] = single_state['batterylow']
-            data['avewindspeed'] = single_state['avewindspeed']
-            data['gustwindspeed'] = single_state['gustwindspeed']
+            data['avewindspeed'] = round(single_state['avewindspeed']/10.0,1)
+            data['gustwindspeed'] = round(single_state['gustwindspeed']/10.0,1)
             data['winddirection'] = single_state['winddirection']
-            data['cumulativerain'] = single_state['cumulativerain']
+            data['cumulativerain'] = round(single_state['cumulativerain']/10.0,1)
             #Temp converted to F
             wTemp = (single_state['temperature'] - 400)/10.0
             if (wTemp > 140.0):
@@ -92,7 +92,10 @@ def getStateJSON_all():
                  data['temperature'] = round(((wTemp - 32.0)/(9.0/5.0)),2)
             data['humidity'] = single_state['humidity']
             data['light'] = single_state['light'] 
-            data['uv'] = single_state['uv']
+            uv = single_state['uv']
+            if (uv >= 0xfa):
+               uv = uv | 0x7f00
+            data['uv'] = round(uv/10.0, 1)
             data['mic'] = single_state['mic'] 
             data['mod'] = single_state['mod'] 
             data['freq'] = single_state['freq'] 
@@ -100,5 +103,6 @@ def getStateJSON_all():
             data['snr'] = single_state['snr']
             data['noise'] = single_state['noise']
             data['gateway_id'] = config.Gateway_Id
+            data['source'] = "middle_agent"
             states_list.append(json.dumps(data))
         return states_list
