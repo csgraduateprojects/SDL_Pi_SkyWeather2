@@ -159,13 +159,13 @@ def blynkStateUpdate():
     updateFlag = 0
     if config.BLYNK_DEV_ID:
        #Find the WeatherRack in the array that matches the value
-       for WR2JSON in state.MWR2Array:
-         if str(WR2JSON["id"]) == config.BLYNK_DEV_ID:
-             #set that to current state
-             textWR2JSON = json.dumps(WR2JSON)
-             wirelessSensors.processFT020T(textWR2JSON, "", False)
-             #Make sure we update
-             updateFlag = 1
+        for WR2JSON in state.MWR2Array:
+            if str(WR2JSON["id"]) == config.BLYNK_DEV_ID:
+                #set that to current state
+                textWR2JSON = json.dumps(WR2JSON)
+                wirelessSensors.processFT020T(textWR2JSON, "", False)
+                #Make sure we update
+                updateFlag =
     else:
         updateFlag = 1
 
@@ -173,7 +173,7 @@ def blynkStateUpdate():
         try:
         # do not blynk if no main reading yet
             if (state.lastMainReading != "Never"):
-                
+            
                 blynkUpdateImage()
                 
                 put_header={"Content-Type": "application/json"}
@@ -184,7 +184,7 @@ def blynkStateUpdate():
                 val = time.strftime("%Y-%m-%d %H:%M:%S")  
                 put_body = json.dumps([val])
                 if (DEBUGBLYNK):
-                print("blynkEventUpdate:",val)
+                    print("blynkEventUpdate:",val)
                 r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V44', data=put_body, headers=put_header)
                 if (DEBUGBLYNK):
                     print("blynkEventUpdate:POST:r.status_code:",r.status_code)
@@ -397,8 +397,9 @@ def blynkStateUpdate():
             print(traceback.format_exc())
             print (e)
             return 0
+
     else:
-        print("Weather Rack in configuration hasn't reported yet")
+        print("Weather Rack ID from config not yet received")
         return 0
 
 def blynkStatusUpdate():
