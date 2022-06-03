@@ -165,7 +165,7 @@ def blynkStateUpdate():
                 textWR2JSON = json.dumps(WR2JSON)
                 wirelessSensors.processFT020T(textWR2JSON, "", False)
                 #Make sure we update
-                updateFlag =
+                updateFlag = 1
     else:
         updateFlag = 1
 
