@@ -156,6 +156,7 @@ def blynkUpdateImage():
 
 def blynkStateUpdate():
     #If the Blynk ID value is set:
+    updateFlag = 0
     if config.BLYNK_DEV_ID:
        #Find the WeatherRack in the array that matches the value
        for WR2JSON in state.MWR2Array:
@@ -163,233 +164,241 @@ def blynkStateUpdate():
              #set that to current state
              textWR2JSON = json.dumps(WR2JSON)
              wirelessSensors.processFT020T(textWR2JSON, "", False)
+             #Make sure we update
+             updateFlag = 1
+    else:
+        updateFlag = 1
 
-    try:
-     # do not blynk if no main reading yet
-     if (state.lastMainReading != "Never"):
-        
-        blynkUpdateImage()
-        
-        put_header={"Content-Type": "application/json"}
-
-        # set last sample time 
-        
-        put_header={"Content-Type": "application/json"}
-        val = time.strftime("%Y-%m-%d %H:%M:%S")  
-        put_body = json.dumps([val])
-        if (DEBUGBLYNK):
-          print("blynkEventUpdate:",val)
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V44', data=put_body, headers=put_header)
-        if (DEBUGBLYNK):
-            print("blynkEventUpdate:POST:r.status_code:",r.status_code)
-
-        # do the graphs
-
-
-        if (config.USEWSAQI):
-            val = state.WS_AQI
-        else:
-            val = state.AQI 
-        put_body = json.dumps([val])
-        if (DEBUGBLYNK):
-            print("blynkStateUpdate:Pre:put_body:",put_body)
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V7', data=put_body, headers=put_header)
-        if (DEBUGBLYNK):
-            print("blynkStateUpdate:POST:r.status_code:",r.status_code)
-    
-
-        val = util.returnTemperatureCF(state.OutdoorTemperature)
-        tval = "{0:0.1f} ".format(val) + util.returnTemperatureCFUnit()
-        put_body = json.dumps([tval])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V0', data=put_body, headers=put_header)
-
-        val = util.returnTemperatureCF(state.OutdoorTemperature)
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V10', data=put_body, headers=put_header)
-
-        val = state.OutdoorHumidity 
-        put_body = json.dumps(["{0:0.1f}%".format(val)])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V1', data=put_body, headers=put_header)
-
-        val = state.OutdoorHumidity 
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V11', data=put_body, headers=put_header)
-
-        val = util.returnTemperatureCF(state.IndoorTemperature)
-        tval = "{0:0.1f} ".format(val) + util.returnTemperatureCFUnit()
-        put_body = json.dumps([tval])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V21', data=put_body, headers=put_header)
-
-        val = util.returnTemperatureCF(state.IndoorTemperature)
-        tval = "{0:0.1f}".format(val) 
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V120', data=put_body, headers=put_header)
-
-        val = state.IndoorHumidity 
-        put_body = json.dumps(["{0:0.1f}%".format(val)])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V13', data=put_body, headers=put_header)
-
-        val = state.IndoorHumidity 
-        put_body = json.dumps(["{0:0.1f}".format(val)])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V121', data=put_body, headers=put_header)
-
-        if (state.fanState == False):
-            val = 0
-        else:
-            val = 1
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V122', data=put_body, headers=put_header)
-
-
-        #wind
-        val = util.returnWindSpeed(state.WindSpeed)
-        tval = "{0:0.1f}".format(val) + util.returnWindSpeedUnit()
-        put_body = json.dumps([tval])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V9', data=put_body, headers=put_header)
-
-        #now humiidyt
-        #val = util.returnWindSpeed(state.WindSpeed)
-        val = state.OutdoorHumidity
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V19', data=put_body, headers=put_header)
-
-        # outdoor Air Quality
-        if (config.USEWSAQI):
-            val = state.WS_AQI
-        else:
-            val = state.AQI 
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V20', data=put_body, headers=put_header)
-        
-        #wind direction
-        val = "{0:0.0f}/".format(state.WindDirection) + util.returnWindDirection(state.WindDirection)
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V2', data=put_body, headers=put_header)
-
-        #rain 
-        val = "{0:0.2f}".format(state.TotalRain) 
-        if (config.English_Metric == 1):
-            tval = "{0:0.2f}mm".format(state.TotalRain) 
-        else:
-            tval = "{0:0.2f}in".format(state.TotalRain / 25.4) 
-        put_body = json.dumps([tval])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V3', data=put_body, headers=put_header)
-
-        #Sunlight 
-        val = "{0:0.0f}".format(state.SunlightVisible) 
-        #print ("Sunlight Val = ", state.SunlightVisible)
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V4', data=put_body, headers=put_header)
-
-        #Sunlight  for Graph
-        val = "{0:0.0f}".format(state.SunlightVisible) 
-        #print ("Sunlight Val = ", state.SunlightVisible)
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V130', data=put_body, headers=put_header)
-
-        #barometric Pressure 
-        if (config.English_Metric == 1):
-            tval = "{0:0.2f}hPa".format(state.BarometricPressureSeaLevel*10.0)
-        else:
-            tval = "{0:0.2f}in".format((state.BarometricPressureSeaLevel * 0.2953)) 
-        put_body = json.dumps([tval])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V40', data=put_body, headers=put_header)
-
-        #barometric Pressure graph
-        if (config.English_Metric == 1):
-            tval = "{0:0.2f}".format(state.BarometricPressureSeaLevel) 
-        else:
-            tval = "{0:0.2f}".format((state.BarometricPressureSeaLevel * 0.2953)) 
-        put_body = json.dumps([tval])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V41', data=put_body, headers=put_header)
-
-        #solar data
-
-        val = "{0:0.2f}".format(state.solarVoltage) 
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V50', data=put_body, headers=put_header)
-
-        val = "{0:0.1f}".format(state.solarCurrent) 
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V51', data=put_body, headers=put_header)
-
-        val = "{0:0.2f}".format(state.batteryVoltage) 
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V52', data=put_body, headers=put_header)
-
-        val = "{0:0.1f}".format(state.batteryCurrent) 
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V53', data=put_body, headers=put_header)
-
-        val = "{0:0.2f}".format(state.loadVoltage) 
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V54', data=put_body, headers=put_header)
-
-        val = "{0:0.1f}".format(state.loadCurrent) 
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V55', data=put_body, headers=put_header)
-
-        val = "{0:0.1f}W".format(state.batteryPower) 
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V60', data=put_body, headers=put_header)
-        
-        val = "{0:0.1f}W".format(state.solarPower) 
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V61', data=put_body, headers=put_header)
-        
-        val = "{0:0.1f}W".format(state.loadPower) 
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V62', data=put_body, headers=put_header)
-
-
-        
-        if (config.SolarMAX_Present == True):
+    if (updateFlag):
+        try:
+        # do not blynk if no main reading yet
+        if (state.lastMainReading != "Never"):
             
-            blynkSolarMAXLine(state.SolarMAXLastReceived)
-            if (state.SolarMAXLastReceived != "Never"): 
-                val = util.returnTemperatureCF(state.SolarMaxInsideTemperature)
-                tval = "{0:0.1f} ".format(val) + util.returnTemperatureCFUnit()
-                put_body = json.dumps([tval])
-                r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V76', data=put_body, headers=put_header)
+            blynkUpdateImage()
+            
+            put_header={"Content-Type": "application/json"}
 
-                val = "{0:0.1f}%".format(state.SolarMaxInsideHumidity) 
-                put_body = json.dumps([val])
-                r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V77', data=put_body, headers=put_header)
+            # set last sample time 
+            
+            put_header={"Content-Type": "application/json"}
+            val = time.strftime("%Y-%m-%d %H:%M:%S")  
+            put_body = json.dumps([val])
+            if (DEBUGBLYNK):
+            print("blynkEventUpdate:",val)
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V44', data=put_body, headers=put_header)
+            if (DEBUGBLYNK):
+                print("blynkEventUpdate:POST:r.status_code:",r.status_code)
 
-        
-        
-        val = "{0:0.1f}".format(state.batteryCharge) 
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V56', data=put_body, headers=put_header)
-        
-        val = "{0:0.1f}".format(state.batteryCharge) 
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V127', data=put_body, headers=put_header)
-        
-        delta = util.returnTemperatureCF(state.IndoorTemperature)- util.returnTemperatureCF(state.OutdoorTemperature)
-        
-        val = "{0:0.1f}".format(delta) 
-        put_body = json.dumps([val])
-        r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V128', data=put_body, headers=put_header)
-        
-        
-        # LEDs 
+            # do the graphs
 
 
-        if (state.barometricTrend):   #True is up, False is down
-                        r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V42?color=%2300FF00') # Green
-                        if (DEBUGBLYNK):
-                            print("blynkAlarmUpdate:OTHER:r.status_code:",r.status_code)
-        else:
-                        r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V42?color=%23FF0000') # red
+            if (config.USEWSAQI):
+                val = state.WS_AQI
+            else:
+                val = state.AQI 
+            put_body = json.dumps([val])
+            if (DEBUGBLYNK):
+                print("blynkStateUpdate:Pre:put_body:",put_body)
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V7', data=put_body, headers=put_header)
+            if (DEBUGBLYNK):
+                print("blynkStateUpdate:POST:r.status_code:",r.status_code)
+        
+
+            val = util.returnTemperatureCF(state.OutdoorTemperature)
+            tval = "{0:0.1f} ".format(val) + util.returnTemperatureCFUnit()
+            put_body = json.dumps([tval])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V0', data=put_body, headers=put_header)
+
+            val = util.returnTemperatureCF(state.OutdoorTemperature)
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V10', data=put_body, headers=put_header)
+
+            val = state.OutdoorHumidity 
+            put_body = json.dumps(["{0:0.1f}%".format(val)])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V1', data=put_body, headers=put_header)
+
+            val = state.OutdoorHumidity 
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V11', data=put_body, headers=put_header)
+
+            val = util.returnTemperatureCF(state.IndoorTemperature)
+            tval = "{0:0.1f} ".format(val) + util.returnTemperatureCFUnit()
+            put_body = json.dumps([tval])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V21', data=put_body, headers=put_header)
+
+            val = util.returnTemperatureCF(state.IndoorTemperature)
+            tval = "{0:0.1f}".format(val) 
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V120', data=put_body, headers=put_header)
+
+            val = state.IndoorHumidity 
+            put_body = json.dumps(["{0:0.1f}%".format(val)])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V13', data=put_body, headers=put_header)
+
+            val = state.IndoorHumidity 
+            put_body = json.dumps(["{0:0.1f}".format(val)])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V121', data=put_body, headers=put_header)
+
+            if (state.fanState == False):
+                val = 0
+            else:
+                val = 1
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V122', data=put_body, headers=put_header)
+
+
+            #wind
+            val = util.returnWindSpeed(state.WindSpeed)
+            tval = "{0:0.1f}".format(val) + util.returnWindSpeedUnit()
+            put_body = json.dumps([tval])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V9', data=put_body, headers=put_header)
+
+            #now humiidyt
+            #val = util.returnWindSpeed(state.WindSpeed)
+            val = state.OutdoorHumidity
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V19', data=put_body, headers=put_header)
+
+            # outdoor Air Quality
+            if (config.USEWSAQI):
+                val = state.WS_AQI
+            else:
+                val = state.AQI 
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V20', data=put_body, headers=put_header)
+            
+            #wind direction
+            val = "{0:0.0f}/".format(state.WindDirection) + util.returnWindDirection(state.WindDirection)
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V2', data=put_body, headers=put_header)
+
+            #rain 
+            val = "{0:0.2f}".format(state.TotalRain) 
+            if (config.English_Metric == 1):
+                tval = "{0:0.2f}mm".format(state.TotalRain) 
+            else:
+                tval = "{0:0.2f}in".format(state.TotalRain / 25.4) 
+            put_body = json.dumps([tval])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V3', data=put_body, headers=put_header)
+
+            #Sunlight 
+            val = "{0:0.0f}".format(state.SunlightVisible) 
+            #print ("Sunlight Val = ", state.SunlightVisible)
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V4', data=put_body, headers=put_header)
+
+            #Sunlight  for Graph
+            val = "{0:0.0f}".format(state.SunlightVisible) 
+            #print ("Sunlight Val = ", state.SunlightVisible)
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V130', data=put_body, headers=put_header)
+
+            #barometric Pressure 
+            if (config.English_Metric == 1):
+                tval = "{0:0.2f}hPa".format(state.BarometricPressureSeaLevel*10.0)
+            else:
+                tval = "{0:0.2f}in".format((state.BarometricPressureSeaLevel * 0.2953)) 
+            put_body = json.dumps([tval])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V40', data=put_body, headers=put_header)
+
+            #barometric Pressure graph
+            if (config.English_Metric == 1):
+                tval = "{0:0.2f}".format(state.BarometricPressureSeaLevel) 
+            else:
+                tval = "{0:0.2f}".format((state.BarometricPressureSeaLevel * 0.2953)) 
+            put_body = json.dumps([tval])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V41', data=put_body, headers=put_header)
+
+            #solar data
+
+            val = "{0:0.2f}".format(state.solarVoltage) 
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V50', data=put_body, headers=put_header)
+
+            val = "{0:0.1f}".format(state.solarCurrent) 
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V51', data=put_body, headers=put_header)
+
+            val = "{0:0.2f}".format(state.batteryVoltage) 
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V52', data=put_body, headers=put_header)
+
+            val = "{0:0.1f}".format(state.batteryCurrent) 
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V53', data=put_body, headers=put_header)
+
+            val = "{0:0.2f}".format(state.loadVoltage) 
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V54', data=put_body, headers=put_header)
+
+            val = "{0:0.1f}".format(state.loadCurrent) 
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V55', data=put_body, headers=put_header)
+
+            val = "{0:0.1f}W".format(state.batteryPower) 
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V60', data=put_body, headers=put_header)
+            
+            val = "{0:0.1f}W".format(state.solarPower) 
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V61', data=put_body, headers=put_header)
+            
+            val = "{0:0.1f}W".format(state.loadPower) 
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V62', data=put_body, headers=put_header)
+
+
+            
+            if (config.SolarMAX_Present == True):
+                
+                blynkSolarMAXLine(state.SolarMAXLastReceived)
+                if (state.SolarMAXLastReceived != "Never"): 
+                    val = util.returnTemperatureCF(state.SolarMaxInsideTemperature)
+                    tval = "{0:0.1f} ".format(val) + util.returnTemperatureCFUnit()
+                    put_body = json.dumps([tval])
+                    r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V76', data=put_body, headers=put_header)
+
+                    val = "{0:0.1f}%".format(state.SolarMaxInsideHumidity) 
+                    put_body = json.dumps([val])
+                    r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V77', data=put_body, headers=put_header)
+
+            
+            
+            val = "{0:0.1f}".format(state.batteryCharge) 
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V56', data=put_body, headers=put_header)
+            
+            val = "{0:0.1f}".format(state.batteryCharge) 
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V127', data=put_body, headers=put_header)
+            
+            delta = util.returnTemperatureCF(state.IndoorTemperature)- util.returnTemperatureCF(state.OutdoorTemperature)
+            
+            val = "{0:0.1f}".format(delta) 
+            put_body = json.dumps([val])
+            r = requests.put(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V128', data=put_body, headers=put_header)
+            
+            
+            # LEDs 
+
+
+            if (state.barometricTrend):   #True is up, False is down
+                            r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V42?color=%2300FF00') # Green
+                            if (DEBUGBLYNK):
+                                print("blynkAlarmUpdate:OTHER:r.status_code:",r.status_code)
+            else:
+                            r = requests.get(config.BLYNK_URL+config.BLYNK_AUTH+'/update/V42?color=%23FF0000') # red
 
 
 
-        return 1
-    except Exception as e:
-        print("exception in blynkStateUpdate")
-        print(traceback.format_exc())
-        print (e)
+            return 1
+        except Exception as e:
+            print("exception in blynkStateUpdate")
+            print(traceback.format_exc())
+            print (e)
+            return 0
+    else:
+        print("Weather Rack in configuration hasn't reported yet")
         return 0
 
 def blynkStatusUpdate():
